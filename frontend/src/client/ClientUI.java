@@ -9,131 +9,118 @@ import javax.swing.*;
 
 public class ClientUI {
     private JFrame frame;
-    private JTextField inputField;   // Campo de entrada de respuesta
-    private JTextArea chatArea;      // Área de chat para mostrar mensajes
-    private PrintWriter output;      // Escritor para enviar datos al servidor
-    private JTextField nameField;    // Campo de nombre
-    private Socket socket;           // Socket para la conexión al servidor
+    private JTextField inputField;
+    private JTextArea chatArea;
+    private PrintWriter output;
+    private JTextField nameField;
+    private Socket socket;
 
     public ClientUI() {
         frame = new JFrame("Adivina la Palabra");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);  // Centra la ventana en la pantalla
+        frame.setSize(700, 500);
+        frame.setLocationRelativeTo(null);
+        frame.getContentPane().setBackground(new Color(30, 30, 30));
+        frame.setLayout(new BorderLayout());
 
-        // Estilo de los componentes
-        Font font = new Font("Arial", Font.PLAIN, 14);
+        Font font = new Font("Verdana", Font.PLAIN, 14);
 
-        // Área de chat
-        chatArea = new JTextArea(10, 30);
+        chatArea = new JTextArea(12, 40);
         chatArea.setEditable(false);
         chatArea.setFont(font);
-        chatArea.setBackground(new Color(240, 240, 240));
+        chatArea.setBackground(new Color(50, 50, 50));
+        chatArea.setForeground(Color.WHITE);
+        chatArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         chatArea.setLineWrap(true);
         JScrollPane scrollPane = new JScrollPane(chatArea);
         frame.add(scrollPane, BorderLayout.CENTER);
 
-        // Campo de entrada de respuesta
         inputField = new JTextField(20);
         inputField.setFont(font);
-        inputField.setBackground(new Color(255, 255, 255));
-        inputField.setForeground(new Color(0, 0, 0));
-        inputField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2));
+        inputField.setBackground(new Color(70, 70, 70));
+        inputField.setForeground(Color.WHITE);
+        inputField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Botón "Enviar Respuesta"
-        JButton sendButton = new JButton("Enviar Respuesta");
+        JButton sendButton = new JButton("Enviar");
         sendButton.setFont(font);
-        sendButton.setBackground(new Color(0, 123, 255));
+        sendButton.setBackground(new Color(0, 153, 255));
         sendButton.setForeground(Color.WHITE);
-        sendButton.setFocusPainted(false);
         sendButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         sendButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Panel para el campo de respuesta y el botón "Enviar"
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new BorderLayout());
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.setBackground(new Color(30, 30, 30));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Campo para el nombre del jugador
-        nameField = new JTextField(20);
+        nameField = new JTextField(15);
         nameField.setFont(font);
-        nameField.setBackground(new Color(255, 255, 255));
-        nameField.setForeground(new Color(0, 0, 0));
-        nameField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2));
+        nameField.setBackground(new Color(70, 70, 70));
+        nameField.setForeground(Color.WHITE);
+        nameField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Botón "Comenzar"
         JButton startButton = new JButton("Comenzar");
         startButton.setFont(font);
-        startButton.setBackground(new Color(40, 167, 69));
+        startButton.setBackground(new Color(0, 204, 102));
         startButton.setForeground(Color.WHITE);
-        startButton.setFocusPainted(false);
         startButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         startButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Panel para el nombre del jugador y el botón "Comenzar"
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
-        panel.add(new JLabel("Ingresa tu nombre:"));
-        panel.add(nameField);
-        panel.add(startButton);
-        frame.add(panel, BorderLayout.NORTH);
+        JPanel topPanel = new JPanel(new FlowLayout());
+        topPanel.setBackground(new Color(30, 30, 30));
+        topPanel.add(new JLabel("Nombre: ", SwingConstants.CENTER));
+        topPanel.add(nameField);
+        topPanel.add(startButton);
+        
+        frame.add(topPanel, BorderLayout.NORTH);
 
-        // Mostrar la interfaz
         frame.setVisible(true);
 
-        // Acción cuando se hace click en "Comenzar"
         startButton.addActionListener(e -> {
             if (!nameField.getText().isEmpty()) {
                 try {
-                    socket = new Socket("172.25.3.48", 12345);  // Dirección IP y puerto del servidor
+                    socket = new Socket("172.25.3.48", 12345);
                     BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = new PrintWriter(socket.getOutputStream(), true);
-
-                    // Enviar el nombre del jugador al servidor
                     output.println(nameField.getText());
 
-                    // Iniciar un hilo para recibir mensajes del servidor
                     new Thread(() -> {
                         try {
                             String response;
                             while ((response = input.readLine()) != null) {
-                                chatArea.append(response + "\n");  // Mostrar la respuesta del servidor en el chat
+                                chatArea.append(response + "\n");
                             }
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
                     }).start();
 
-                    // Ocultar el panel de nombre y mostrar el campo de respuesta
-                    panel.setVisible(false);
-                    frame.add(inputPanel, BorderLayout.SOUTH);  // Agregar el panel de entrada con el botón
+                    topPanel.setVisible(false);
+                    frame.add(inputPanel, BorderLayout.SOUTH);
                     frame.revalidate();
                     frame.repaint();
 
-                    // Acción cuando se presiona el botón "Enviar Respuesta"
                     sendButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             String response = inputField.getText();
                             if (!response.isEmpty()) {
-                                output.println(response);  // Enviar la respuesta al servidor
-                                inputField.setText("");  // Limpiar el campo de entrada después de enviar
+                                output.println(response);
+                                inputField.setText("");
                             }
                         }
                     });
-
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             } else {
-                JOptionPane.showMessageDialog(frame, "Bienvenido al Juego", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Ingresa un nombre para comenzar.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
     public static void main(String[] args) {
-        new ClientUI();  // Iniciar la interfaz del cliente
+        new ClientUI();
     }
 }
