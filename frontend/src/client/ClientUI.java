@@ -128,7 +128,7 @@ public class ClientUI {
                     ex.printStackTrace();
                 }
             } else {
-                JOptionPane.showMessageDialog(frame, "Por favor, ingresa tu nombre.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Bienvenido al Juego", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
