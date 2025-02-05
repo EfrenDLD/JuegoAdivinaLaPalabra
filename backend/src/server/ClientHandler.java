@@ -10,7 +10,7 @@ public class ClientHandler implements Runnable {
     private PrintWriter output;
     private List<ClientHandler> clients;
     private GameManager gameManager;
-    private int attempts = 5;
+    private int attempts = 5;   // Intentos restantes
     private String playerName;  // Nombre del jugador
 
     public ClientHandler(Socket socket, List<ClientHandler> clients, GameManager gameManager) {
@@ -33,21 +33,27 @@ public class ClientHandler implements Runnable {
             playerName = input.readLine();
             output.println("Bienvenido " + playerName + "! " + gameManager.getHint());
 
+            // Bucle del juego
             while (attempts > 0) {
                 String guess = input.readLine();
                 if (guess == null) {
                     break; // El cliente se ha desconectado
                 }
-                String response = gameManager.checkGuess(guess);
-                attempts--;
+
+                String response = gameManager.checkGuess(guess); // Verificar la adivinanza
+                attempts--; // Reducir intentos después de cada intento
+
+                // Si el jugador acierta
                 if (response.contains("¡Correcto!")) {
-                    broadcast(response + " " + playerName + " ha ganado!");
-                    break;
+                    broadcast(response + " " + playerName + " ha ganado con " + attempts + " intentos restantes.");
+                    break;  // Detener el juego
                 } else {
-                    broadcast(response + " | Intentos restantes: " + attempts);
+                    broadcast(response + " | " + playerName + " | Intentos restantes: " + attempts);
                 }
+
+                // Si el jugador ha agotado los intentos
                 if (attempts == 0) {
-                    broadcast("¡Has perdido! La palabra era: " + gameManager.getSecretWord());
+                    broadcast("¡" + playerName + " ha perdido! La palabra era: " + gameManager.getSecretWord());
                 }
             }
         } catch (IOException e) {
@@ -58,13 +64,13 @@ public class ClientHandler implements Runnable {
             } catch (IOException e) { 
                 e.printStackTrace(); 
             }
-            clients.remove(this);
+            clients.remove(this);  // Eliminar cliente de la lista de clientes
         }
     }
 
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
-            client.output.println(message);
+            client.output.println(message);  // Enviar mensaje a todos los clientes
         }
     }
 
