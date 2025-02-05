@@ -7,7 +7,6 @@ public class GameManager {
         "PIZZA","EINSTEIN", "MURALLA CHINA","TESLA",
         "GUELAGUETZA", 
         "MOLE", 
-        "MITLA", 
         "OAXACA", 
         "TAMALES"
 };
@@ -23,7 +22,6 @@ public class GameManager {
         //PREGUNTAS DE OAXACA 
         "\nGran festividad de Oaxaca celebrada en julio, conocida por sus danzas y música.",
         "\nPlatillo tradicional de Oaxaca, conocido por su salsa espesa.",
-        "\nSitio arqueológico importante para la cultura zapoteca.",
         "\nNombre del estado donde se encuentran muchas culturas indígenas, como los zapotecas y mixtecos.",
         "\nPlatillo tradicional de masa, generalmente relleno de carne, verduras o chile."
 
