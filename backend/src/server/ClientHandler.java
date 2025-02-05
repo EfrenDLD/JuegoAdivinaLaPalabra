@@ -99,7 +99,7 @@ public class ClientHandler implements Runnable {
 
     public void playNotificationSound() {
         try {
-            File soundFile = new File("notification.wav"); // Asegúrate de que el archivo esté en la raíz del proyecto o proporciona una ruta válida
+            File soundFile = new File("src/server/mixkit-retro-game-notification-212"); // Asegúrate de que el archivo esté en la raíz del proyecto o proporciona una ruta válida
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
