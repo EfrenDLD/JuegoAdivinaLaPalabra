@@ -69,19 +69,19 @@ public class ClientUI {
 
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.setBackground(new Color(30, 30, 30));
-        JLabel nameLabel = new JLabel("Nombre: ", SwingConstants.CENTER);
-        nameLabel.setForeground(Color.WHITE);  // Establecer texto en blanco
-        topPanel.add(nameLabel);
+        topPanel.add(new JLabel("Nombre: ", SwingConstants.CENTER));
+
         topPanel.add(nameField);
         topPanel.add(startButton);
-
+        
+        frame.add(topPanel, BorderLayout.NORTH);
 
         frame.setVisible(true);
 
         startButton.addActionListener(e -> {
             if (!nameField.getText().isEmpty()) {
                 try {
-                    socket = new Socket("172.25.3.48", 12345);
+                    socket = new Socket("172.25.3.67", 12345);
                     BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = new PrintWriter(socket.getOutputStream(), true);
                     output.println(nameField.getText());

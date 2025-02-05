@@ -3,9 +3,6 @@ package src.server;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -95,17 +92,5 @@ public class ClientHandler implements Runnable {
 
     public String getPlayerName() {
         return playerName;
-    }
-
-    public void playNotificationSound() {
-        try {
-            File soundFile = new File("src/server/mixkit-retro-game-notification-212"); // Asegúrate de que el archivo esté en la raíz del proyecto o proporciona una ruta válida
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
