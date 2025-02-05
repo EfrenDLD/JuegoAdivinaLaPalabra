@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
-
     private Socket socket;
     private BufferedReader input;
     private PrintWriter output;
@@ -32,46 +31,6 @@ public class ClientHandler implements Runnable {
             // Solicitar el nombre del jugador
             output.println("Por favor, ingresa tu nombre: ");
             playerName = input.readLine();
-
-            // Verificar si hay al menos dos jugadores conectados
-            synchronized (clients) {
-                if (clients.size() < 2) {
-                    output.println("Esperando a que otro jugador se conecte para comenzar...");
-                    while (clients.size() < 2) {
-                        clients.wait();  // Esperar hasta que otro jugador se conecte
-                    }
-                    // Notificar al primer jugador que el segundo jugador se ha conectado
-                    for (ClientHandler client : clients) {
-                        if (!client.getPlayerName().equals(playerName)) {
-                            client.output.println(playerName + " se acaba de conectar. ¡Pueden comenzar a jugar!");
-                        }
-                    }
-                }
-            }
-
-            // Pedir a ambos jugadores que digan "comenzar" para empezar el juego
-            synchronized (clients) {
-                for (ClientHandler client : clients) {
-                    if (!client.getPlayerName().equals(playerName)) {
-                        client.output.println("Ambos jugadores están listos! " + playerName + " está esperando a que digas 'comenzar' para empezar.");
-                    }
-                }
-
-                // Esperar que ambos jugadores digan "comenzar"
-                boolean ready = false;
-                while (!ready) {
-                    String startCommand = input.readLine();
-                    if ("comenzar".equalsIgnoreCase(startCommand)) {
-                        ready = true;
-                        // Notificar a los jugadores que el juego ha comenzado
-                        broadcast("¡El juego ha comenzado! " + playerName + " ha dado la señal.");
-                    } else {
-                        output.println("Esperando a que todos los jugadores digan 'comenzar'...");
-                    }
-                }
-            }
-
-            // Enviar la pista al jugador
             output.println("Bienvenido " + playerName + "! " + gameManager.getHint());
 
             // Bucle del juego
@@ -97,20 +56,15 @@ public class ClientHandler implements Runnable {
                     broadcast("¡" + playerName + " ha perdido! La palabra era: " + gameManager.getSecretWord());
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            try { 
+                socket.close(); 
+            } catch (IOException e) { 
+                e.printStackTrace(); 
             }
-            synchronized (clients) {
-                clients.remove(this);  // Eliminar cliente de la lista de clientes
-                if (clients.size() > 1) {
-                    clients.notify();  // Notificar a los demás jugadores que ya hay 2 jugadores
-                }
-            }
+            clients.remove(this);  // Eliminar cliente de la lista de clientes
         }
     }
 
