@@ -13,14 +13,6 @@ public class ClientHandler implements Runnable {
     private int attempts = 5;   // Intentos restantes
     private String playerName;  // Nombre del jugador
 
-    // Códigos ANSI para colores
-    private static final String RESET = "\033[0m";
-    private static final String BOLD = "\033[1m";
-    private static final String UNDERLINE = "\033[4m";
-    private static final String GREEN = "\033[32m";
-    private static final String CYAN = "\033[36m";
-    private static final String YELLOW = "\033[33m";
-
     public ClientHandler(Socket socket, List<ClientHandler> clients, GameManager gameManager) {
         this.socket = socket;
         this.clients = clients;
@@ -37,20 +29,19 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             // Solicitar el nombre del jugador
-            output.println(CYAN + BOLD + "¡Bienvenido al juego!" + RESET);
             output.println("Por favor, ingresa tu nombre: ");
             playerName = input.readLine();
     
             synchronized (clients) {
                 // Notificar a todos los jugadores que se ha unido uno nuevo
-                broadcast(YELLOW + BOLD + "Jugador " + playerName + " se ha unido al juego." + RESET);
+                broadcast("Jugador " + playerName + " se ha unido al juego.");
                 
                 // Si hay al menos dos jugadores, enviar la pista a todos
                 if (clients.size() >= 2) {
                     String hint = gameManager.getHint();
-                    broadcast(CYAN + "¡Comienza el juego! La pista es: " + BOLD + hint + RESET);
+                    broadcast("¡Comienza el juego! La pista es: " + hint);
                 } else {
-                    output.println(YELLOW + "Esperando a otro jugador..." + RESET);
+                    output.println("Esperando a otro jugador...");
                 }
             }
     
@@ -66,15 +57,15 @@ public class ClientHandler implements Runnable {
     
                 // Si el jugador acierta
                 if (response.contains("¡Correcto!")) {
-                    broadcast(GREEN + BOLD + response + " " + playerName + " ha ganado con " + attempts + " intentos restantes." + RESET);
+                    broadcast(response + " " + playerName + " ha ganado con " + attempts + " intentos restantes.");
                     break;  // Detener el juego
                 } else {
-                    broadcast(YELLOW + response + " | " + playerName + " | Intentos restantes: " + attempts + RESET);
+                    broadcast(response + " | " + playerName + " | Intentos restantes: " + attempts);
                 }
     
                 // Si el jugador ha agotado los intentos
                 if (attempts == 0) {
-                    broadcast(GREEN + "¡" + playerName + " ha perdido! La palabra era: " + gameManager.getSecretWord() + RESET);
+                    broadcast("¡" + playerName + " ha perdido! La palabra era: " + gameManager.getSecretWord());
                 }
             }
         } catch (IOException e) {
@@ -87,11 +78,12 @@ public class ClientHandler implements Runnable {
             }
             synchronized (clients) {
                 clients.remove(this);  // Eliminar cliente de la lista de clientes
-                broadcast(YELLOW + "Jugador " + playerName + " ha salido del juego." + RESET);
+                broadcast("Jugador " + playerName + " ha salido del juego.");
             }
         }
     }
     
+
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
             client.output.println(message);  // Enviar mensaje a todos los clientes
