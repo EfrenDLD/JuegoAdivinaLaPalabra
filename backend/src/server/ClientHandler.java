@@ -45,9 +45,18 @@ public class ClientHandler implements Runnable {
                             client.output.println(playerName + " se acaba de conectar. ¡Pueden comenzar a jugar!");
                         }
                     }
+                } else {
+                    // Notificar ambos jugadores que están listos para jugar
+                    output.println("¡Ambos jugadores están listos para comenzar!");
+                    for (ClientHandler client : clients) {
+                        if (!client.getPlayerName().equals(playerName)) {
+                            client.output.println("¡Ambos jugadores están listos! " + playerName + " ya está preparado.");
+                        }
+                    }
                 }
             }
 
+            // Enviar la pista al primer jugador o al segundo jugador
             output.println("Bienvenido " + playerName + "! " + gameManager.getHint());
 
             // Bucle del juego
