@@ -69,11 +69,12 @@ public class ClientUI {
 
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.setBackground(new Color(30, 30, 30));
-        topPanel.add(new JLabel("Nombre: ", SwingConstants.CENTER));
+        JLabel nameLabel = new JLabel("Nombre: ", SwingConstants.CENTER);
+        nameLabel.setForeground(Color.WHITE);  // Establecer texto en blanco
+        topPanel.add(nameLabel);
         topPanel.add(nameField);
         topPanel.add(startButton);
-        
-        frame.add(topPanel, BorderLayout.NORTH);
+
 
         frame.setVisible(true);
 
@@ -115,7 +116,7 @@ public class ClientUI {
                     ex.printStackTrace();
                 }
             } else {
-                JOptionPane.showMessageDialog(frame, "Ingresa un nombre para comenzar.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Bienvenido al Juego", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
