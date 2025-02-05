@@ -12,6 +12,7 @@ public class GameServer {
     private static GameManager gameManager = new GameManager();
 
     public static void main(String[] args) {
+        // se usa socket para esperar conexiones de clientes
         System.out.println("Servidor iniciado en el puerto " + PORT);
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
@@ -19,6 +20,7 @@ public class GameServer {
                 System.out.println("Nuevo jugador conectado!");
                 ClientHandler clientHandler = new ClientHandler(clientSocket, clients, gameManager);
                 clients.add(clientHandler);
+                //para manejar cada cliente en un hilo nuevo
                 new Thread(clientHandler).start();
             }
         } catch (IOException e) {
