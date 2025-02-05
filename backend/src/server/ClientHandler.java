@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
+
     private Socket socket;
     private BufferedReader input;
     private PrintWriter output;
@@ -31,7 +32,7 @@ public class ClientHandler implements Runnable {
             // Solicitar el nombre del jugador
             output.println("Por favor, ingresa tu nombre: ");
             playerName = input.readLine();
-            
+
             // Verificar si hay al menos dos jugadores conectados
             synchronized (clients) {
                 if (clients.size() < 2) {
@@ -45,18 +46,32 @@ public class ClientHandler implements Runnable {
                             client.output.println(playerName + " se acaba de conectar. ¡Pueden comenzar a jugar!");
                         }
                     }
-                } else {
-                    // Notificar ambos jugadores que están listos para jugar
-                    output.println("¡Ambos jugadores están listos para comenzar!");
-                    for (ClientHandler client : clients) {
-                        if (!client.getPlayerName().equals(playerName)) {
-                            client.output.println("¡Ambos jugadores están listos! " + playerName + " ya está preparado.");
-                        }
+                }
+            }
+
+            // Pedir a ambos jugadores que digan "comenzar" para empezar el juego
+            synchronized (clients) {
+                for (ClientHandler client : clients) {
+                    if (!client.getPlayerName().equals(playerName)) {
+                        client.output.println("Ambos jugadores están listos! " + playerName + " está esperando a que digas 'comenzar' para empezar.");
+                    }
+                }
+
+                // Esperar que ambos jugadores digan "comenzar"
+                boolean ready = false;
+                while (!ready) {
+                    String startCommand = input.readLine();
+                    if ("comenzar".equalsIgnoreCase(startCommand)) {
+                        ready = true;
+                        // Notificar a los jugadores que el juego ha comenzado
+                        broadcast("¡El juego ha comenzado! " + playerName + " ha dado la señal.");
+                    } else {
+                        output.println("Esperando a que todos los jugadores digan 'comenzar'...");
                     }
                 }
             }
 
-            // Enviar la pista al primer jugador o al segundo jugador
+            // Enviar la pista al jugador
             output.println("Bienvenido " + playerName + "! " + gameManager.getHint());
 
             // Bucle del juego
@@ -85,10 +100,10 @@ public class ClientHandler implements Runnable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
-            try { 
-                socket.close(); 
-            } catch (IOException e) { 
-                e.printStackTrace(); 
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             synchronized (clients) {
                 clients.remove(this);  // Eliminar cliente de la lista de clientes
