@@ -31,6 +31,15 @@ public class ClientHandler implements Runnable {
             // Solicitar el nombre del jugador
             output.println("Por favor, ingresa tu nombre: ");
             playerName = input.readLine();
+            
+            // Verificar si hay al menos dos jugadores conectados
+            if (clients.size() < 2) {
+                output.println("Esperando a que otro jugador se conecte para comenzar...");
+                synchronized (clients) {
+                    clients.wait();  // Esperar hasta que otro jugador se conecte
+                }
+            }
+
             output.println("Bienvenido " + playerName + "! " + gameManager.getHint());
 
             // Bucle del juego
@@ -56,7 +65,7 @@ public class ClientHandler implements Runnable {
                     broadcast("¡" + playerName + " ha perdido! La palabra era: " + gameManager.getSecretWord());
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             try { 
@@ -64,7 +73,12 @@ public class ClientHandler implements Runnable {
             } catch (IOException e) { 
                 e.printStackTrace(); 
             }
-            clients.remove(this);  // Eliminar cliente de la lista de clientes
+            synchronized (clients) {
+                clients.remove(this);  // Eliminar cliente de la lista de clientes
+                if (clients.size() > 1) {
+                    clients.notify();  // Notificar a los demás jugadores que ya hay 2 jugadores
+                }
+            }
         }
     }
 
