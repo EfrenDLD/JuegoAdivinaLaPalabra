@@ -1,5 +1,5 @@
-// backend/src/server/ClientHandler.java
 package src.server;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -11,6 +11,7 @@ public class ClientHandler implements Runnable {
     private List<ClientHandler> clients;
     private GameManager gameManager;
     private int attempts = 5;
+    private String playerName;  // Nombre del jugador
 
     public ClientHandler(Socket socket, List<ClientHandler> clients, GameManager gameManager) {
         this.socket = socket;
@@ -27,7 +28,11 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            output.println("Bienvenido a Adivina la Palabra! " + gameManager.getHint());
+            // Solicitar el nombre del jugador
+            output.println("Por favor, ingresa tu nombre: ");
+            playerName = input.readLine();
+            output.println("Bienvenido " + playerName + "! " + gameManager.getHint());
+
             while (attempts > 0) {
                 String guess = input.readLine();
                 if (guess == null) {
@@ -36,7 +41,7 @@ public class ClientHandler implements Runnable {
                 String response = gameManager.checkGuess(guess);
                 attempts--;
                 if (response.contains("¡Correcto!")) {
-                    broadcast(response);
+                    broadcast(response + " " + playerName + " ha ganado!");
                     break;
                 } else {
                     broadcast(response + " | Intentos restantes: " + attempts);
@@ -56,10 +61,14 @@ public class ClientHandler implements Runnable {
             clients.remove(this);
         }
     }
-    
+
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
             client.output.println(message);
         }
+    }
+
+    public String getPlayerName() {
+        return playerName;
     }
 }

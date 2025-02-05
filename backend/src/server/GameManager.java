@@ -1,6 +1,5 @@
-// backend/src/server/GameManager.java
 package src.server;
-// backend/src/server/GameManager.java
+
 import java.util.Random;
 
 public class GameManager {
