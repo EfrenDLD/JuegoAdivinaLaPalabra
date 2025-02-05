@@ -30,6 +30,9 @@ public class ClientHandler implements Runnable {
             output.println("Bienvenido a Adivina la Palabra! " + gameManager.getHint());
             while (attempts > 0) {
                 String guess = input.readLine();
+                if (guess == null) {
+                    break; // El cliente se ha desconectado
+                }
                 String response = gameManager.checkGuess(guess);
                 attempts--;
                 if (response.contains("¡Correcto!")) {
@@ -45,10 +48,15 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try { socket.close(); } catch (IOException e) { e.printStackTrace(); }
+            try { 
+                socket.close(); 
+            } catch (IOException e) { 
+                e.printStackTrace(); 
+            }
+            clients.remove(this);
         }
     }
-
+    
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
             client.output.println(message);

@@ -7,8 +7,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class GameClient {
-    private static final String SERVER_IP = "localhost";
-    /*private static final String SERVER_IP = "172.25.3.67";*/
+    /*private static final String SERVER_IP = "localhost";*/
+    private static final String SERVER_IP = "172.25.3.67";
 
     private static final int SERVER_PORT = 12345;
 

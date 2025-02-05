@@ -1,6 +1,7 @@
 package src.server;
 // backend/src/server/GameServer.java
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class GameServer {
     public static void main(String[] args) {
         // se usa socket para esperar conexiones de clientes
         System.out.println("Servidor iniciado en el puerto " + PORT);
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT, 50, InetAddress.getByName("0.0.0.0"));) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Nuevo jugador conectado!");
