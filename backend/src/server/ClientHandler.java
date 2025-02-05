@@ -33,10 +33,18 @@ public class ClientHandler implements Runnable {
             playerName = input.readLine();
             
             // Verificar si hay al menos dos jugadores conectados
-            if (clients.size() < 2) {
-                output.println("Esperando a que otro jugador se conecte para comenzar...");
-                synchronized (clients) {
-                    clients.wait();  // Esperar hasta que otro jugador se conecte
+            synchronized (clients) {
+                if (clients.size() < 2) {
+                    output.println("Esperando a que otro jugador se conecte para comenzar...");
+                    while (clients.size() < 2) {
+                        clients.wait();  // Esperar hasta que otro jugador se conecte
+                    }
+                    // Notificar al primer jugador que el segundo jugador se ha conectado
+                    for (ClientHandler client : clients) {
+                        if (!client.getPlayerName().equals(playerName)) {
+                            client.output.println(playerName + " se acaba de conectar. ¡Pueden comenzar a jugar!");
+                        }
+                    }
                 }
             }
 
