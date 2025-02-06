@@ -45,7 +45,7 @@ public class GameManager {
     }
 
     public String getHint() {
-        return "\n Ingresa tu respuesta... " + hint;
+        return "\nLa pista es la siguiente ... " + hint;
     }
 
     public String getSecretWord() {

@@ -86,11 +86,11 @@ public class ClientUI {
         startButton.addActionListener(e -> {
             if (!nameField.getText().isEmpty()) {
                 try {
-                    socket = new Socket("172.25.3.48", 12345);
+                    socket = new Socket("192.168.56.1", 12345);
                     BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = new PrintWriter(socket.getOutputStream(), true);
                     output.println(nameField.getText());
-                    reproducirSonido("AdivinaLaPalabra/frontend/src/client/holaa.wav"); // Sonido al entrar al juego
+                    reproducirSonido("JUEGOADIVINALAPALABRA/frontend/src/client/holaa.wav"); // Sonido al entrar al juego
 
 
                     new Thread(() -> {

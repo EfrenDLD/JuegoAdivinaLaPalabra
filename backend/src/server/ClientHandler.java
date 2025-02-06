@@ -36,7 +36,7 @@ public class ClientHandler implements Runnable {
             
                 if (clients.size() >= 2) {
                     String hint = gameManager.getHint();
-                    broadcast("Comienza el juegooo La pista es: " + hint);
+                    broadcast("Comienza el juego: " + hint);
                 } else {
                     output.println("Esperando a otro jugador...");
                 }
