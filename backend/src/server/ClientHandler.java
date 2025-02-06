@@ -3,6 +3,7 @@ package src.server;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
+import javax.sound.sampled.*;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -29,13 +30,16 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             // Solicitar el nombre del jugador
-            output.println("Por favor, ingresa tu nombre: ");
+            output.println("Bienvenido al juego: " + playerName);
             playerName = input.readLine();
     
             synchronized (clients) {
                 // Notificar a todos los jugadores que se ha unido uno nuevo
-                broadcast("Jugador " + playerName + " se ha unido al juego.");
+                broadcast("Jugador wapo" + playerName + " se ha unido al juego.");
                 
+                // Reproducir sonido de notificación
+                playSound("mixkit-retro-game-notification-212.wav");
+
                 // Si hay al menos dos jugadores, enviar la pista a todos
                 if (clients.size() >= 2) {
                     String hint = gameManager.getHint();
@@ -82,7 +86,6 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-    
 
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
@@ -93,4 +96,23 @@ public class ClientHandler implements Runnable {
     public String getPlayerName() {
         return playerName;
     }
+
+    // Método para reproducir un sonido
+    private void playSound(String soundFile) {
+        try {
+            InputStream audioSrc = getClass().getClassLoader().getResourceAsStream("mixkit-retro-game-notification-212.wav");
+            if (audioSrc == null) {
+                System.out.println("No se encontró el archivo de sonido: " + soundFile);
+                return;
+            }
+    
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(audioSrc));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 }
