@@ -3,6 +3,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.List;
 
+
+
 public class ClientHandler implements Runnable {
     private Socket socket;
     private BufferedReader input;
@@ -33,7 +35,7 @@ public class ClientHandler implements Runnable {
     
             synchronized (clients) {
                 // Notificar a todos los jugadores que se ha unido uno nuevo
-                broadcast("Jugador wapo " + playerName + " se ha unido al juego.");
+                broadcast("Jugador  " + playerName + " se ha unido al juego.");
             
                 // Si hay al menos dos jugadores, enviar la pista a todos
                 if (clients.size() >= 2) {
@@ -91,6 +93,5 @@ public class ClientHandler implements Runnable {
     public String getPlayerName() {
         return playerName;
     }
-
     
 }

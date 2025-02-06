@@ -90,13 +90,14 @@ public class ClientUI {
                     BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = new PrintWriter(socket.getOutputStream(), true);
                     output.println(nameField.getText());
+                    reproducirSonido("AdivinaLaPalabra/frontend/src/client/holaa.wav"); // Sonido al entrar al juego
+
 
                     new Thread(() -> {
                         try {
                             String response;
                             while ((response = input.readLine()) != null) {
                                 chatArea.append(response + "\n");
-                                reproducirSonido("AdivinaLaPalabra/frontend/src/client/audio.wav");
                             }
                         } catch (IOException ex) {
                             ex.printStackTrace();
@@ -107,14 +108,15 @@ public class ClientUI {
                     frame.add(inputPanel, BorderLayout.SOUTH);
                     frame.revalidate();
                     frame.repaint();
-
                     sendButton.addActionListener(new ActionListener() {
+                        
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             String response = inputField.getText();
                             if (!response.isEmpty()) {
                                 output.println(response);
                                 inputField.setText("");
+                                reproducirSonido("AdivinaLaPalabra/frontend/src/client/agrega.wav"); // Sonido al entrar al juego
                             }
                         }
                     });
@@ -123,6 +125,7 @@ public class ClientUI {
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "Por favor, ingrese su nombre", "Error", JOptionPane.ERROR_MESSAGE);
+                reproducirSonido("AdivinaLaPalabra/frontend/src/client/noes.wav");
             }
         });
     }
