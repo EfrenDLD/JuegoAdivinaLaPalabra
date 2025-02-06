@@ -1,10 +1,15 @@
 package client;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 
 public class ClientUI {
@@ -91,6 +96,7 @@ public class ClientUI {
                             String response;
                             while ((response = input.readLine()) != null) {
                                 chatArea.append(response + "\n");
+                                reproducirSonido("AdivinaLaPalabra/frontend/src/client/audio.wav");
                             }
                         } catch (IOException ex) {
                             ex.printStackTrace();
@@ -123,5 +129,34 @@ public class ClientUI {
 
     public static void main(String[] args) {
         new ClientUI();
+    }
+
+        // Método para reproducir un sonid
+    public static void reproducirSonido(String ruta) {
+        try {
+            File archivoSonido = new File(ruta);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(archivoSonido);
+
+            // Obtener formato original
+            AudioFormat formatoOriginal = audioStream.getFormat();
+            AudioFormat formatoCompatible = new AudioFormat(
+                    AudioFormat.Encoding.PCM_SIGNED, // Convertir a PCM_SIGNED
+                    formatoOriginal.getSampleRate(),
+                    16, // Convertir a 16 bits
+                    formatoOriginal.getChannels(),
+                    formatoOriginal.getChannels() * 2,
+                    formatoOriginal.getSampleRate(),
+                    false);
+
+            // Convertir el audio
+            AudioInputStream audioConvertido = AudioSystem.getAudioInputStream(formatoCompatible, audioStream);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioConvertido);
+            clip.start();
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 }
