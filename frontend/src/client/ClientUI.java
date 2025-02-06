@@ -13,7 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 
 public class ClientUI {
-    private JFrame frame;
+    private JFrame frame; //ventana principal
     private JTextField inputField;
     private JTextArea chatArea;
     private PrintWriter output;
@@ -21,6 +21,7 @@ public class ClientUI {
     private Socket socket;
 
     public ClientUI() {
+        //Configuración de la ventana principal (JFrame)
         frame = new JFrame("Adivina la Palabra");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700, 500);
@@ -28,6 +29,7 @@ public class ClientUI {
         frame.getContentPane().setBackground(new Color(30, 30, 30));
         frame.setLayout(new BorderLayout());
 
+        //Configuración del área de chat (JTextArea)
         Font font = new Font("Verdana", Font.PLAIN, 14);
 
         chatArea = new JTextArea(12, 40);
@@ -40,6 +42,7 @@ public class ClientUI {
         JScrollPane scrollPane = new JScrollPane(chatArea);
         frame.add(scrollPane, BorderLayout.CENTER);
 
+        //Configuración del campo de entrada de texto (JTextField) y botón de envío
         inputField = new JTextField(20);
         inputField.setFont(font);
         inputField.setBackground(new Color(70, 70, 70));
@@ -53,6 +56,7 @@ public class ClientUI {
         sendButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         sendButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        //Panel para la entrada de texto y botón de envío
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.setBackground(new Color(30, 30, 30));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -65,6 +69,7 @@ public class ClientUI {
         nameField.setForeground(Color.WHITE);
         nameField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        //Configuración del nombre del usuario
         JButton startButton = new JButton("Comenzar");
         startButton.setFont(font);
         startButton.setBackground(new Color(0, 204, 102));
@@ -72,6 +77,7 @@ public class ClientUI {
         startButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         startButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        //Panel para el nombre y botón de inicio
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.setBackground(new Color(30, 30, 30));
         topPanel.add(new JLabel("Nombre: ", SwingConstants.CENTER));
@@ -83,6 +89,7 @@ public class ClientUI {
 
         frame.setVisible(true);
 
+        //Si el usuario ingresa un nombre, crea un socket para conectarse al servidor 192.168.56.1 en el puerto 12345
         startButton.addActionListener(e -> {
             if (!nameField.getText().isEmpty()) {
                 try {
@@ -90,9 +97,9 @@ public class ClientUI {
                     BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = new PrintWriter(socket.getOutputStream(), true);
                     output.println(nameField.getText());
-                    reproducirSonido("JUEGOADIVINALAPALABRA/frontend/src/client/holaa.wav"); // Sonido al entrar al juego
+                    reproducirSonido("AdivinaLaPalabra/frontend/src/client/holaa.wav"); // Sonido al entrar al juego
 
-
+                    //Se crea un hilo (Thread) que lee continuamente los mensajes del servidor y los muestra en el área de chat
                     new Thread(() -> {
                         try {
                             String response;
