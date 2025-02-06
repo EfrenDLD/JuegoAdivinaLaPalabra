@@ -38,7 +38,7 @@ public class GameManager {
 
     public String checkGuess(String guess) {
         if (guess.equalsIgnoreCase(secretWord)) {
-            return "¡Correcto! La palabra era " + secretWord;
+            return "Correcto La palabra era " + secretWord;
         } else {
             return "Incorrecto, intenta de nuevo.";
         }

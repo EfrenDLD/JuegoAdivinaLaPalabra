@@ -28,9 +28,11 @@ public class ClientUI {
         frame.setLocationRelativeTo(null);
         frame.getContentPane().setBackground(new Color(30, 30, 30));
         frame.setLayout(new BorderLayout());
+        frame.setIconImage(new ImageIcon("AdivinaLaPalabra/frontend/src/images/adivino.png").getImage());
+
 
         //Configuración del área de chat (JTextArea)
-        Font font = new Font("Verdana", Font.PLAIN, 14);
+        Font font = new Font("Verdana", Font.PLAIN, 16);
 
         chatArea = new JTextArea(12, 40);
         chatArea.setEditable(false);
@@ -77,27 +79,39 @@ public class ClientUI {
         startButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         startButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+//imagen arariba del form 
+        ImageIcon originalIcon = new ImageIcon("AdivinaLaPalabra/frontend/src/images/jugador.png");
+        Image scaledImage = originalIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        JLabel iconLabel = new JLabel(new ImageIcon(scaledImage));
+        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         //Panel para el nombre y botón de inicio
+        JLabel nameLabel = new JLabel("Ingrese su nombre: ", SwingConstants.CENTER);
+        nameLabel.setFont(new Font("Verdana", Font.BOLD, 16)); // Aumenta el tamaño de la fuente
+
         JPanel topPanel = new JPanel(new FlowLayout());
-        topPanel.setBackground(new Color(30, 30, 30));
-        topPanel.add(new JLabel("Nombre: ", SwingConstants.CENTER));
-
+        topPanel.add(iconLabel);
+        topPanel.setBackground(new Color(255, 255, 255));
+        topPanel.add(nameLabel);
+        topPanel.add(Box.createVerticalStrut(5));
+        topPanel.add(Box.createVerticalStrut(5));
         topPanel.add(nameField);
+        topPanel.add(Box.createVerticalStrut(5));
         topPanel.add(startButton);
-        
-        frame.add(topPanel, BorderLayout.NORTH);
 
+
+        frame.add(topPanel, BorderLayout.NORTH);
         frame.setVisible(true);
 
         //Si el usuario ingresa un nombre, crea un socket para conectarse al servidor 192.168.56.1 en el puerto 12345
         startButton.addActionListener(e -> {
             if (!nameField.getText().isEmpty()) {
                 try {
-                    socket = new Socket("192.168.56.1", 12345);
+                    socket = new Socket("172.25.3.48", 12345);
                     BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = new PrintWriter(socket.getOutputStream(), true);
                     output.println(nameField.getText());
-                    reproducirSonido("AdivinaLaPalabra/frontend/src/client/holaa.wav"); // Sonido al entrar al juego
+                    reproducirSonido("AdivinaLaPalabra/frontend/src/audios/holaa.wav"); // Sonido al entrar al juego
 
                     //Se crea un hilo (Thread) que lee continuamente los mensajes del servidor y los muestra en el área de chat
                     new Thread(() -> {
@@ -105,6 +119,10 @@ public class ClientUI {
                             String response;
                             while ((response = input.readLine()) != null) {
                                 chatArea.append(response + "\n");
+                                // Verificar si el mensaje indica que el jugador ha ganado
+                                    if (response.equals("¡Correcto!")) {
+                                        reproducirSonido("AdivinaLaPalabra/frontend/src/audios/ganoo.wav");  // Sonido de victoria
+                                    }
                             }
                         } catch (IOException ex) {
                             ex.printStackTrace();
@@ -123,7 +141,7 @@ public class ClientUI {
                             if (!response.isEmpty()) {
                                 output.println(response);
                                 inputField.setText("");
-                                reproducirSonido("AdivinaLaPalabra/frontend/src/client/agrega.wav"); // Sonido al entrar al juego
+                                reproducirSonido("AdivinaLaPalabra/frontend/src/audios/agrega.wav"); // Sonido al entrar al juego
                             }
                         }
                     });
@@ -132,7 +150,7 @@ public class ClientUI {
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "Por favor, ingrese su nombre", "Error", JOptionPane.ERROR_MESSAGE);
-                reproducirSonido("AdivinaLaPalabra/frontend/src/client/noes.wav");
+                reproducirSonido("AdivinaLaPalabra/frontend/src/audios/noes.wav");
             }
         });
     }

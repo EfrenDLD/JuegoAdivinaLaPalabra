@@ -8,7 +8,7 @@ public class WelcomeScreen {
     private JFrame frame;
     
     public WelcomeScreen() {
-        frame = new JFrame("Bienvenido a Adivina la Palabra");
+        frame = new JFrame("Bienvenido al juego");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700, 500);
         frame.setLocationRelativeTo(null);
@@ -16,13 +16,13 @@ public class WelcomeScreen {
         frame.getContentPane().setBackground(new Color(30, 30, 30));
 
         // Título
-        JLabel titleLabel = new JLabel("¡Bienvenido a Adivina la Palabra!", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Bienvenido al juego de", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Verdana", Font.BOLD, 20));
         titleLabel.setForeground(Color.WHITE);
         frame.add(titleLabel, BorderLayout.NORTH);
 
         // Imagen de referencia
-        ImageIcon icon = new ImageIcon("JUEGOADIVINALAPALABRA/frontend/src/images/logo.png");
+        ImageIcon icon = new ImageIcon("AdivinaLaPalabra/frontend/src/images/logo.png");
         JLabel imageLabel = new JLabel(icon);
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         frame.add(imageLabel, BorderLayout.CENTER);

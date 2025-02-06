@@ -28,7 +28,7 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             // Solicitar el nombre del jugador
-            output.println("Bienvenido al juego amigo:");
+            output.println("Bienvenido al juego amigo");
             playerName = input.readLine();
     
             synchronized (clients) {
@@ -36,7 +36,7 @@ public class ClientHandler implements Runnable {
             
                 if (clients.size() >= 2) {
                     String hint = gameManager.getHint();
-                    broadcast("Comienza el juego: " + hint);
+                    broadcast("Comienza el juego  " + hint);
                 } else {
                     output.println("Esperando a otro jugador...");
                 }
@@ -55,9 +55,12 @@ public class ClientHandler implements Runnable {
                 // Si el jugador acierta
                 if (response.contains("¡Correcto!")) {
                     broadcast(response + " " + playerName + " ha ganado con " + attempts + " intentos restantes.");
+                    output.println("¡Felicidades, has ganado!"); 
                     return;  // Finalizar juego al acertar
                 } else {
                     broadcast(response + " | " + playerName + " | Intentos restantes: " + attempts);
+                    System.out.println("tamal.");
+
                 }
     
                 // Si el jugador agota intentos
