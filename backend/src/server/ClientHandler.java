@@ -3,8 +3,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.List;
 
-
-
 public class ClientHandler implements Runnable {
     private Socket socket;
     private BufferedReader input;
@@ -30,17 +28,15 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             // Solicitar el nombre del jugador
-            output.println("Bienvenido al juego:");
+            output.println("Bienvenido al juego amigo:");
             playerName = input.readLine();
     
             synchronized (clients) {
-                // Notificar a todos los jugadores que se ha unido uno nuevo
-                broadcast("Jugador  " + playerName + " se ha unido al juego.");
+                broadcast("Jugador " + playerName + " se ha unido al juego.");
             
-                // Si hay al menos dos jugadores, enviar la pista a todos
                 if (clients.size() >= 2) {
                     String hint = gameManager.getHint();
-                    broadcast("¡Comienza el juego! La pista es: " + hint);
+                    broadcast("Comienza el juegooo La pista es: " + hint);
                 } else {
                     output.println("Esperando a otro jugador...");
                 }
@@ -50,23 +46,25 @@ public class ClientHandler implements Runnable {
             while (attempts > 0) {
                 String guess = input.readLine();
                 if (guess == null) {
-                    break; // El cliente se ha desconectado
+                    break; // Cliente desconectado
                 }
     
-                String response = gameManager.checkGuess(guess); // Verificar la adivinanza
-                attempts--; // Reducir intentos después de cada intento
+                String response = gameManager.checkGuess(guess);
+                attempts--; // Reducir intentos
     
                 // Si el jugador acierta
                 if (response.contains("¡Correcto!")) {
                     broadcast(response + " " + playerName + " ha ganado con " + attempts + " intentos restantes.");
-                    break;  // Detener el juego
+                    return;  // Finalizar juego al acertar
                 } else {
                     broadcast(response + " | " + playerName + " | Intentos restantes: " + attempts);
                 }
     
-                // Si el jugador ha agotado los intentos
+                // Si el jugador agota intentos
                 if (attempts == 0) {
-                    broadcast("¡" + playerName + " ha perdido! La palabra era: " + gameManager.getSecretWord());
+                    broadcast("¡" + playerName + " ha perdido!");
+                    checkGameOver();  // Verificar si todos los jugadores perdieron
+                    return;
                 }
             }
         } catch (IOException e) {
@@ -78,20 +76,25 @@ public class ClientHandler implements Runnable {
                 e.printStackTrace(); 
             }
             synchronized (clients) {
-                clients.remove(this);  // Eliminar cliente de la lista de clientes
+                clients.remove(this);
                 broadcast("Jugador " + playerName + " ha salido del juego.");
+                checkGameOver(); // Revisar si el juego debe terminar
             }
         }
     }
 
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
-            client.output.println(message);  // Enviar mensaje a todos los clientes
+            client.output.println(message);
         }
     }
 
-    public String getPlayerName() {
-        return playerName;
+    private void checkGameOver() {
+        synchronized (clients) {
+            boolean allLost = clients.stream().allMatch(client -> client.attempts == 0);
+            if (allLost) {
+                broadcast("¡Nadie adivinó la palabra! La palabra era: " + gameManager.getSecretWord());
+            }
+        }
     }
-    
 }
