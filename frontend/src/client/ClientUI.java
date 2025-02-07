@@ -28,7 +28,7 @@ public class ClientUI {
         frame.setLocationRelativeTo(null);
         frame.getContentPane().setBackground(new Color(30, 30, 30));
         frame.setLayout(new BorderLayout());
-        frame.setIconImage(new ImageIcon("AdivinaLaPalabra/frontend/src/images/adivino.png").getImage());
+        frame.setIconImage(new ImageIcon("frontend/src/images/adivino.png").getImage());
 
 
         //Configuración del área de chat (JTextArea)
@@ -80,7 +80,7 @@ public class ClientUI {
         startButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 //imagen arariba del form 
-        ImageIcon originalIcon = new ImageIcon("AdivinaLaPalabra/frontend/src/images/jugador.png");
+        ImageIcon originalIcon = new ImageIcon("frontend/src/images/jugador.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         JLabel iconLabel = new JLabel(new ImageIcon(scaledImage));
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -107,11 +107,11 @@ public class ClientUI {
         startButton.addActionListener(e -> {
             if (!nameField.getText().isEmpty()) {
                 try {
-                    socket = new Socket("172.25.3.48", 12345);
+                    socket = new Socket("192.168.137.220", 12345);
                     BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = new PrintWriter(socket.getOutputStream(), true);
                     output.println(nameField.getText());
-                    reproducirSonido("AdivinaLaPalabra/frontend/src/audios/holaa.wav"); // Sonido al entrar al juego
+                    reproducirSonido("frontend/src/audios/holaa.wav"); // Sonido al entrar al juego
 
                     //Se crea un hilo (Thread) que lee continuamente los mensajes del servidor y los muestra en el área de chat
                     new Thread(() -> {
@@ -121,7 +121,7 @@ public class ClientUI {
                                 chatArea.append(response + "\n");
                                 // Verificar si el mensaje indica que el jugador ha ganado
                                     if (response.equals("¡Correcto!")) {
-                                        reproducirSonido("AdivinaLaPalabra/frontend/src/audios/ganoo.wav");  // Sonido de victoria
+                                        reproducirSonido("frontend/src/audios/ganoo.wav");  // Sonido de victoria
                                     }
                             }
                         } catch (IOException ex) {
@@ -141,7 +141,7 @@ public class ClientUI {
                             if (!response.isEmpty()) {
                                 output.println(response);
                                 inputField.setText("");
-                                reproducirSonido("AdivinaLaPalabra/frontend/src/audios/agrega.wav"); // Sonido al entrar al juego
+                                reproducirSonido("frontend/src/audios/agrega.wav"); // Sonido al entrar al juego
                             }
                         }
                     });
@@ -150,7 +150,7 @@ public class ClientUI {
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "Por favor, ingrese su nombre", "Error", JOptionPane.ERROR_MESSAGE);
-                reproducirSonido("AdivinaLaPalabra/frontend/src/audios/noes.wav");
+                reproducirSonido("frontend/src/audios/noes.wav");
             }
         });
     }

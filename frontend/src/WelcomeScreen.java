@@ -22,7 +22,7 @@ public class WelcomeScreen {
         frame.add(titleLabel, BorderLayout.NORTH);
 
         // Imagen de referencia
-        ImageIcon icon = new ImageIcon("AdivinaLaPalabra/frontend/src/images/logo.png");
+        ImageIcon icon = new ImageIcon("frontend/src/images/logo.png");
         JLabel imageLabel = new JLabel(icon);
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         frame.add(imageLabel, BorderLayout.CENTER);
